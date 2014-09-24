@@ -11,8 +11,23 @@
 %% {Name, DTL, Vars, RenderOpts, CompilerOpts, Output, Warnings}
 
 tests() ->
-    [def_to_test(G, D) || {G, Ds} <- all_test_defs(), D <- Ds].
+    [def_to_test(G, D) || {G, Ds} <- all_test_defs() ++ map_test_defs(), D <- Ds].
 
+-ifdef(maps_support).
+map_test_defs() ->
+    [{"variable",
+      [{"Render variable with attribute in map",
+        <<"{{ var1.attr }}">>, [{var1, #{attr => "Othello"}}], <<"Othello">>}
+      ,{"Render variable with attribute nested map",
+        <<"{{ var1.foo.bar }}">>, [{var1, #{foo => #{bar => "Othello"}}}], <<"Othello">>}
+      ]}].
+-endif.
+
+-ifndef(maps_support).
+map_test_defs() ->
+    [].
+-endif.
+    
 all_test_defs() ->
     [{"vars",
       [{"string",
