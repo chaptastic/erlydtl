@@ -49,37 +49,65 @@ adjust_index(Key, Off, Opt, Options) when is_list(Options) ->
     end;
 adjust_index(Key, _Off, _Opt, _Options) -> Key.
 
-find_value(_, undefined) ->
+-ifndef(maps_support).
+find_value(Key, Val) ->
+    find_value_(Key, Val).
+-endif.
+
+-ifdef(maps_support).
+find_value(Key, Map) when is_atom(Key), is_map(Map) ->
+    case maps:find(Key, Map) of
+        {ok, Value} ->
+            Value;
+        false -> find_value(atom_to_list(Key), Map)
+    end;
+find_value(Key, Map) when is_list(Key), is_map(Map) ->
+    case maps:find(Key, Map) of
+        {ok, Value} ->
+            Value;
+        false -> find_value(list_to_binary(Key), Map)
+    end;
+find_value(Key, Map) when is_binary(Key), is_map(Map) ->
+    case maps:find(Key, Map) of
+        {ok, Value} ->
+            Value;
+        false -> undefined
+    end;
+find_value(Key, Val) ->
+    find_value_(Key, Val).
+-endif.
+
+find_value_(_, undefined) ->
     undefined;
-find_value(Key, Fun) when is_function(Fun, 1) ->
+find_value_(Key, Fun) when is_function(Fun, 1) ->
     Fun(Key);
-find_value(Key, L) when is_atom(Key), is_list(L) ->
+find_value_(Key, L) when is_atom(Key), is_list(L) ->
     case lists:keyfind(Key, 1, L) of
-        false           -> find_value(atom_to_list(Key), L);
+        false           -> find_value_(atom_to_list(Key), L);
         {Key, Value}    -> Value
     end;
-find_value(Key, L) when is_list(Key), is_list(L) ->
+find_value_(Key, L) when is_list(Key), is_list(L) ->
     case lists:keyfind(Key, 1, L) of
-        false           -> find_value(list_to_binary(Key), L);
+        false           -> find_value_(list_to_binary(Key), L);
         {Key, Value}    -> Value
     end;
-find_value(Key, L) when is_binary(Key), is_list(L) ->
+find_value_(Key, L) when is_binary(Key), is_list(L) ->
     case lists:keyfind(Key, 1, L) of
         false           -> undefined;
         {Key, Value}    -> Value
     end;
-find_value(Key, L) when is_integer(Key), is_list(L) ->
+find_value_(Key, L) when is_integer(Key), is_list(L) ->
     if Key =< length(L) -> lists:nth(Key, L);
        true -> undefined
     end;
-find_value(Key, {GBSize, GBData}) when is_integer(GBSize) ->
+find_value_(Key, {GBSize, GBData}) when is_integer(GBSize) ->
     case gb_trees:lookup(Key, {GBSize, GBData}) of
         {value, Val} ->
             Val;
         _ ->
             undefined
     end;
-find_value(Key, Tuple) when is_tuple(Tuple) ->
+find_value_(Key, Tuple) when is_tuple(Tuple) ->
     case element(1, Tuple) of
         dict ->
             case dict:find(Key, Tuple) of
