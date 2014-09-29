@@ -50,11 +50,19 @@ adjust_index(Key, Off, Opt, Options) when is_list(Options) ->
 adjust_index(Key, _Off, _Opt, _Options) -> Key.
 
 -ifndef(maps_support).
+
+maps_supported() ->
+     false.
+
 find_value(Key, Val) ->
     find_value_(Key, Val).
 -endif.
 
 -ifdef(maps_support).
+
+maps_supported() ->
+    true.
+
 find_value(Key, Map) when is_atom(Key), is_map(Map) ->
     case maps:find(Key, Map) of
         {ok, Value} ->
