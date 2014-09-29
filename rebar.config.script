@@ -1,5 +1,7 @@
 %% -*- mode: erlang -*-
 
+io:format("Checking for maps support... ").
+
 case os:getenv("ERLYDTL_NOMAPS") or proplists:get_value(erlydtl_nomaps, CONFIG, false) of
   false ->
     try file:script("config/maps") of
