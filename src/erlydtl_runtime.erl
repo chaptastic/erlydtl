@@ -121,7 +121,8 @@ find_value_(Key, Tuple) when is_tuple(Tuple) ->
                true -> undefined
             end;
         Module ->
-            case lists:member({Key, 1}, Module:module_info(exports)) of
+            Exports = Module:module_info(exports),
+            case lists:member({Key, 1}, Exports) of
                 true ->
                     case Tuple:Key() of
                         Val when is_tuple(Val) ->
@@ -133,7 +134,12 @@ find_value_(Key, Tuple) when is_tuple(Tuple) ->
                         Val -> Val
                     end;
                 _ ->
-                    undefined
+                    case lists:member({find_value, 2}, Exports) of
+                        true ->
+                            Module:find_value(Key, Tuple);
+                        _ ->
+                            undefined
+                    end
             end
     end;
 find_value(Key, Map) ->
