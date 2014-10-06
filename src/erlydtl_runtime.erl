@@ -59,19 +59,19 @@ find_value(Key, Map) when is_atom(Key), is_map(Map) ->
     case maps:find(Key, Map) of
         {ok, Value} ->
             Value;
-        false -> find_value(atom_to_list(Key), Map)
+        error -> find_value(atom_to_list(Key), Map)
     end;
 find_value(Key, Map) when is_list(Key), is_map(Map) ->
     case maps:find(Key, Map) of
         {ok, Value} ->
             Value;
-        false -> find_value(list_to_binary(Key), Map)
+        error -> find_value(list_to_binary(Key), Map)
     end;
 find_value(Key, Map) when is_binary(Key), is_map(Map) ->
     case maps:find(Key, Map) of
         {ok, Value} ->
             Value;
-        false -> undefined
+        error -> undefined
     end;
 find_value(Key, Val) ->
     find_value_(Key, Val).

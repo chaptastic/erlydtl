@@ -17,6 +17,12 @@ map_test_defs() ->
     [{"variable",
       [{"Render variable with attribute in map",
         <<"{{ var1.attr }}">>, [{var1, #{attr => "Othello"}}], <<"Othello">>}
+      ,{"Render variable with missing attribute in map",
+        <<"{{ var1.foo }}">>, [{var1, #{attr => "Othello"}}], <<"">>}
+      ,{"Render variable with attribute in map with binary key",
+        <<"{{ var1.attr }}">>, [{var1, #{<<"attr">> => "Othello"}}], <<"Othello">>}
+      ,{"Render variable with attribute in map with list key",
+        <<"{{ var1.attr }}">>, [{var1, #{"attr" => "Othello"}}], <<"Othello">>}
       ,{"Render variable with attribute nested map",
         <<"{{ var1.foo.bar }}">>, [{var1, #{foo => #{bar => "Othello"}}}], <<"Othello">>}
       ]}].
