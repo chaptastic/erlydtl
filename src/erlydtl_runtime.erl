@@ -317,6 +317,8 @@ is_false("") -> true;
 is_false(false) -> true;
 is_false(undefined) -> true;
 is_false(null) -> true;
+is_false("undefined") -> true;
+is_false(<<"undefined">>) -> true;
 is_false(0) -> true;
 is_false("0") -> true;
 is_false(<<"0">>) -> true;
