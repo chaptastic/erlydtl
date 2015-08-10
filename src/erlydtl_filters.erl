@@ -524,7 +524,7 @@ random(_) ->
     "".
 
 random_num(Value) ->
-    _ = random:seed(now()),
+    _ = random:seed(erlang:timestamp()),
     random:uniform(Value).
 
 %% random tags to be used when using erlydtl in testing
