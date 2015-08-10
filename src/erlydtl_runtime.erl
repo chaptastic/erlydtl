@@ -149,11 +149,6 @@ find_value_(Key, Tuple) when is_tuple(Tuple) ->
                             undefined
                     end
             end
-    end;
-find_value(Key, Map) ->
-    case erlang:is_builtin(erlang, is_map, 1) andalso erlang:is_map(Map) of
-        true  -> find_map_value(Key, Map);
-        false -> undefined
     end.
 
 find_map_value(Key, Map) when is_atom(Key) ->
