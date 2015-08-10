@@ -165,12 +165,12 @@ yecc_end(Line) ->
 
 yecctoken_end_location(Token) ->
     try
-        {text, Str} = erl_scan:token_info(Token, text),
-        {line, Line} = erl_scan:token_info(Token, line),
+        {text, Str} = erl_scan:text(Token),
+        {line, Line} = erl_scan:line(Token),
         Parts = re:split(Str, "\n"),
         Dline = length(Parts) - 1,
         Yline = Line + Dline,
-        case erl_scan:token_info(Token, column) of
+        case erl_scan:column(Token) of
             {column, Column} ->
                 Col = byte_size(lists:last(Parts)),
                 {Yline, Col + if Dline =:= 0 -> Column; true -> 1 end};
@@ -189,13 +189,13 @@ yeccerror(Token) ->
 
 -compile({nowarn_unused_function, yecctoken_to_string/1}).
 yecctoken_to_string(Token) ->
-    case catch erl_scan:token_info(Token, text) of
+    case catch erl_scan:text(Token) of
         {text, Txt} -> Txt;
         _ -> yecctoken2string(Token)
     end.
 
 yecctoken_location(Token) ->
-    case catch erl_scan:token_info(Token, location) of
+    case catch erl_scan:location(Token) of
         {location, Loc} -> Loc;
         _ -> element(2, Token)
     end.
